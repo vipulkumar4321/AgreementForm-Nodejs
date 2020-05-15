@@ -14,8 +14,6 @@ function sub() {
     const signature = $("#signature")[0].files[0];
     const photo = $("#photo")[0].files[0];
 
-    // console.log(aadhaarFront.File.name);
-
     form.append("companyName", companyName);
     form.append("address", address);
     form.append("email", emailId);
