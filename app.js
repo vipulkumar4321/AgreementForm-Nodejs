@@ -130,20 +130,20 @@ function uploadCheque(time, cheque, name, address, email, contactNumber, whatsap
       return console.log(err);
 
     console.log('Cheque File uploaded!');
-    // var newVendor = {
-    //   name: name,
-    //   address: address,
-    //   email: email,
-    //   contactNumber: contactNumber,
-    //   whatsappNumber: whatsappNumber,
-    // };
-    // Vendor.create(newVendor, function (err, newlyCreated) {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     res.redirect("/thanks");
-    //   }
-    // });
+    var newVendor = {
+      name: name,
+      address: address,
+      email: email,
+      contactNumber: contactNumber,
+      whatsappNumber: whatsappNumber,
+    };
+    Vendor.create(newVendor, function (err, newlyCreated) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.redirect("/thanks");
+      }
+    });
   });
 }
 
