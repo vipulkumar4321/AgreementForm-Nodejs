@@ -60,68 +60,85 @@ app.post("/post", function (req, res) {
 
   time = new Date().getTime().toString();
 
+  if(uploadAadhaar(time, aadhaarFront, aadhaarBack, panFront, panBack, signature, photo, cheque)){
+    var newVendor = {
+      name: name,
+      address: address,
+      email: email,
+      contactNumber: contactNumber,
+      whatsappNumber: whatsappNumber,
+    };
+    Vendor.create(newVendor, function (err, newlyCreated) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.redirect("/thanks");
+      }
+    });
+  }
+});
+
+function uploadAadhaar(time, aadhaarFront, aadhaarBack, panFront, panBack, signature, photo, cheque){
   aadhaarFront.mv('./uploaded_files/Aadhaar/front/' + time + "_" + aadhaarFront.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('Aadhaar Front File Uploaded');
+    aadhaarBack.mv('./uploaded_files/Aadhaar/back/' + time + "_" + aadhaarBack.name, function (err) {
+      if (err)
+        return console.log(err);
+  
+      console.log('Aadhaar Back File Uploaded');
+      uploadPan(time, panFront, panBack, signature, photo, cheque);
+    });
   });
+}
 
-  aadhaarBack.mv('./uploaded_files/Aadhaar/back/' + time + "_" + aadhaarBack.name, function (err) {
-    if (err)
-      return console.log(err);
-
-    console.log('Aadhaar Back File Uploaded');
-  });
-
+function uploadPan(time, panFront, panBack, signature, photo, cheque){
   panFront.mv('./uploaded_files/PAN/front/' + time + "_" + panFront.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('PAN Front File Uploaded');
+    panBack.mv('./uploaded_files/PAN/back/' + time + "_" + panBack.name, function (err) {
+      if (err)
+        return console.log(err);
+  
+      console.log('PAN Back File Uploaded');
+      uploadSignature(time, signature, photo, cheque);
+    });
   });
+}
 
-  panBack.mv('./uploaded_files/PAN/back/' + time + "_" + panBack.name, function (err) {
-    if (err)
-      return console.log(err);
-
-    console.log('PAN Back File Uploaded');
-  });
-
-  cheque.mv('./uploaded_files/Cheque/' + time + "_" + cheque.name, function (err) {
-    if (err)
-      return console.log(err);
-
-    console.log('Cheque File uploaded!');
-  });
+function uploadSignature(time, signature, photo, cheque){
   signature.mv('./uploaded_files/signature/' + time + "_" + signature.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('Signature File uploaded!');
+    uploadPhoto(time, photo, cheque)
   });
+}
+
+function uploadPhoto(time, photo, cheque){
   photo.mv('./uploaded_files/Photo/' + time + "_" + photo.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('Photo File uploaded!');
+    uploadCheque(time, cheque);
   });
+}
 
-  var newVendor = {
-    name: name,
-    address: address,
-    email: email,
-    contactNumber: contactNumber,
-    whatsappNumber: whatsappNumber,
-  };
-  Vendor.create(newVendor, function (err, newlyCreated) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.redirect("/thanks");
-    }
+function uploadCheque(time, cheque){
+  cheque.mv('./uploaded_files/Cheque/' + time + "_" + cheque.name, function (err) {
+    if (err)
+      return console.log(err);
+
+    console.log('Cheque File uploaded!');
+    return true;
   });
-});
+}
 
 app.get("/step1", function (req, res) {
   res.render("step1");
@@ -135,6 +152,6 @@ app.get("/thanks", function (req, res) {
 //   res.redirect("/agreement");
 // });
 
-app.listen(process.env.PORT || 9000, process.env.IP, function () {
+app.listen(9000, function () {
   console.log("Server is listening...");
 });
