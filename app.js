@@ -16,8 +16,10 @@ app.use(
 
 //DB connnection
 mongoose.connect(
-  process.env.DB_CONNECTION,
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  process.env.DB_CONNECTION, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  },
   () => console.log("connected to db...")
 );
 
@@ -56,52 +58,52 @@ app.post("/post", function (req, res) {
 
   // console.log(req.files);
 
-  aadhaarFront.mv('./uploaded_files/Aadhaar/front/'+aadhaarFront.name, function(err) {
+  aadhaarFront.mv('./uploaded_files/Aadhaar/front/' + aadhaarFront.name, function (err) {
     if (err)
-        return console.log(err);
+      return console.log(err);
 
     console.log('Aadhaar Front File Uploaded');
-});
+  });
 
-aadhaarBack.mv('./uploaded_files/Aadhaar/back/'+aadhaarBack.name, function(err) {
-  if (err)
+  aadhaarBack.mv('./uploaded_files/Aadhaar/back/' + aadhaarBack.name, function (err) {
+    if (err)
       return console.log(err);
 
-  console.log('Aadhaar Back File Uploaded');
-});
+    console.log('Aadhaar Back File Uploaded');
+  });
 
-panFront.mv('./uploaded_files/PAN/front/'+panFront.name, function(err) {
-  if (err)
+  panFront.mv('./uploaded_files/PAN/front/' + panFront.name, function (err) {
+    if (err)
       return console.log(err);
 
-  console.log('PAN Front File Uploaded');
-});
+    console.log('PAN Front File Uploaded');
+  });
 
-panBack.mv('./uploaded_files/PAN/back/'+panBack.name, function(err) {
-  if (err)
+  panBack.mv('./uploaded_files/PAN/back/' + panBack.name, function (err) {
+    if (err)
       return console.log(err);
 
-  console.log('PAN Back File Uploaded');
-});
+    console.log('PAN Back File Uploaded');
+  });
 
-cheque.mv('./uploaded_files/Cheque/'+cheque.name, function(err) {
-  if (err)
+  cheque.mv('./uploaded_files/Cheque/' + cheque.name, function (err) {
+    if (err)
       return console.log(err);
 
-  console.log('Cheque File uploaded!');
-});
-signature.mv('./uploaded_files/signature/'+signature.name, function(err) {
-  if (err)
+    console.log('Cheque File uploaded!');
+  });
+  signature.mv('./uploaded_files/signature/' + signature.name, function (err) {
+    if (err)
       return console.log(err);
 
-  console.log('Signature File uploaded!');
-});
-photo.mv('./uploaded_files/Photo/'+photo.name, function(err) {
-  if (err)
+    console.log('Signature File uploaded!');
+  });
+  photo.mv('./uploaded_files/Photo/' + photo.name, function (err) {
+    if (err)
       return console.log(err);
 
-  console.log('Photo File uploaded!');
-});
+    console.log('Photo File uploaded!');
+  });
 
   var newVendor = {
     name: name,

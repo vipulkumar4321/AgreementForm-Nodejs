@@ -36,8 +36,9 @@ function sub() {
         "contentType": false,
         "data": form
     };
-    
+
     $.ajax(settings).done(function (response) {
         console.log(response);
     });
+    window.location = "http://127.0.0.1:9000/thanks?";
 }
