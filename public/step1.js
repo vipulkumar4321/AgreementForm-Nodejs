@@ -40,5 +40,5 @@ function sub() {
     $.ajax(settings).done(function (response) {
         console.log(response);
     });
-    window.location = "http://127.0.0.1:9000/thanks?";
+    window.location = "http://18.224.141.3/thanks";
 }

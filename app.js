@@ -58,47 +58,49 @@ app.post("/post", function (req, res) {
 
   // console.log(req.files);
 
-  aadhaarFront.mv('./uploaded_files/Aadhaar/front/' + aadhaarFront.name, function (err) {
+  time = new Date().getTime().toString();
+
+  aadhaarFront.mv('./uploaded_files/Aadhaar/front/' + time + "_" + aadhaarFront.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('Aadhaar Front File Uploaded');
   });
 
-  aadhaarBack.mv('./uploaded_files/Aadhaar/back/' + aadhaarBack.name, function (err) {
+  aadhaarBack.mv('./uploaded_files/Aadhaar/back/' + time + "_" + aadhaarBack.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('Aadhaar Back File Uploaded');
   });
 
-  panFront.mv('./uploaded_files/PAN/front/' + panFront.name, function (err) {
+  panFront.mv('./uploaded_files/PAN/front/' + time + "_" + panFront.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('PAN Front File Uploaded');
   });
 
-  panBack.mv('./uploaded_files/PAN/back/' + panBack.name, function (err) {
+  panBack.mv('./uploaded_files/PAN/back/' + time + "_" + panBack.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('PAN Back File Uploaded');
   });
 
-  cheque.mv('./uploaded_files/Cheque/' + cheque.name, function (err) {
+  cheque.mv('./uploaded_files/Cheque/' + time + "_" + cheque.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('Cheque File uploaded!');
   });
-  signature.mv('./uploaded_files/signature/' + signature.name, function (err) {
+  signature.mv('./uploaded_files/signature/' + time + "_" + signature.name, function (err) {
     if (err)
       return console.log(err);
 
     console.log('Signature File uploaded!');
   });
-  photo.mv('./uploaded_files/Photo/' + photo.name, function (err) {
+  photo.mv('./uploaded_files/Photo/' + time + "_" + photo.name, function (err) {
     if (err)
       return console.log(err);
 
