@@ -42,6 +42,14 @@ app.get("/agreement", function (req, res) {
   res.render("index");
 });
 
+app.get("/step1", function (req, res) {
+  res.render("step1");
+});
+
+app.get("/thanks", function (req, res) {
+  res.render("thanks");
+});
+
 app.post("/post", function (req, res) {
   var name = req.body.company_Name;
   var address = req.body.address;
@@ -139,13 +147,6 @@ function uploadCheque(time, cheque, name, address, email, contactNumber, whatsap
   });
 }
 
-app.get("/step1", function (req, res) {
-  res.render("step1");
-});
-
-app.get("/thanks", function (req, res) {
-  res.render("thanks");
-});
 
 // app.get("/*", function (req, res) {
 //   res.redirect("/agreement");
