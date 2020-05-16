@@ -36,8 +36,16 @@ function sub() {
         "contentType": false,
         "data": form
     };
-
+    
     $.ajax(settings).done(function (response) {
-        console.log(response);
+        response = JSON.parse(response);
+        console.log(typeof response);
+        if(response.status == true){
+            console.log(response.msg);
+            window.location = "/thanks";
+        }
+        else{
+            console.log(response.msg);
+        }
     });
 }
