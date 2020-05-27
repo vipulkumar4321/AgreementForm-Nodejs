@@ -32,11 +32,22 @@
 
     <hr class="style" />
 
-    <div class="container companyDetail">
+    <div class="container companyDetail ml-auto mr-auto">
         <div class="p-4">
+            <div class="form-group">
+                <label for="inputTypeOfVenue">Type Of Venue</label>
+                <input type="text" class="form-control" id="inputTypeOfVenue" name="cTypeOfVenue"
+                    placeholder="Photographer, Decorator, Caterers, Mehendi, etc." />
+            </div>
+            <div class="form-group">
+                <label for="inputOwnerName">Owner Name</label>
+                <input type="text" class="form-control" id="inputOwnerName" name="cOwnerName" placeholder="Full Name" />
+            </div>
+
             <div class="form-group mt-4">
                 <label for="companyName">Name of the company</label>
-                <input type="text" class="form-control" id="composedName" placeholder="Company Name" required />
+                <input required type="text" class="form-control" id="composedName" name="cName"
+                    placeholder="Company Name" required />
             </div>
             <div class="form-group">
                 <label for="inputAddress">Address</label>
@@ -72,13 +83,15 @@
                 <label for="panFront">PAN Front</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cPANFront" id="panFront" />
             </div>
-            <div class="form-group">
-                <label for="panBack">PAN back</label>
-                <input type="file" accept="image/*" class="form-control-file" name="cPANBack" id="panBack" />
+            <!-- GST Certificates -->
+            <div class="form-group mt-5">
+                <label for="gstCertificate">GST Certificate</label>
+                <input type="file" accept="image/*" class="form-control-file" name="cGSTCertificate"
+                    id="gstCertificate" />
             </div>
             <!-- Cancelled cheque -->
             <div class="form-group mt-5">
-                <label for="cheque">Cheque</label>
+                <label for="cheque">Cancelled Cheque</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cCheque" id="cheque" />
             </div>
             <!-- signature -->
@@ -94,14 +107,13 @@
 
             <div class="container mt-4">
                 <p class="check display-4">
-                    <input type="checkbox" /> Check or uncheck the checkbox to get the
-                    status.
+                    <input type="checkbox" /> The Details filled in this form are true and to the best of my knowledge
                 </p>
                 <div class="center">
                     <!-- <button type="submit" onclick="sub()" id="result" class="btn btn-primary disabled">
                         Check to Proceed
                     </button> -->
-                    <button onclick="sub()" class="button text-center">Check to Proceed</button>
+                    <button onclick="sub()" id="result" class="btn btn-primary disabled">Check to Proceed</button>
                 </div>
             </div>
 
