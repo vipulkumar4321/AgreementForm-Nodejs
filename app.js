@@ -94,7 +94,7 @@ app.post("/post", function (req, res) {
   var aadhaarFront = req.files.aadhaarFront;
   var aadhaarBack = req.files.aadhaarBack;
   var panFront = req.files.panFront;
-  var gstCertificate = req.files.gstCertificate;
+  // var gstCertificate = req.files.gstCertificate;
   var cheque = req.files.cheque;
   var signature = req.files.signature;
   // var photo = req.files.photo;
@@ -106,7 +106,7 @@ app.post("/post", function (req, res) {
     aadhaarFront,
     aadhaarBack,
     panFront,
-    gstCertificate,
+    // gstCertificate,
     signature,
     cheque
   );
@@ -150,14 +150,14 @@ function upload(
   aadhaarFront,
   aadhaarBack,
   panFront,
-  gstCertificate,
+  // gstCertificate,
   signature,
   cheque
 ) {
   const uploadAadhaarFrontFile = uploadAadhaarFront(time, aadhaarFront);
   const uploadAadhaarBackFile = uploadAadhaarBack(time, aadhaarBack);
   const uploadPanFrontFile = uploadPanFront(time, panFront);
-  const uploadGstCertificateFile = uploadGstCertificate(time, gstCertificate);
+  // const uploadGstCertificateFile = uploadGstCertificate(time, gstCertificate);
   const uploadSignatureFile = uploadSignature(time, signature);
   // const uploadPhotoFile = uploadPhoto(time, photo);
   const uploadChequeFile = uploadCheque(time, cheque);
@@ -183,12 +183,12 @@ function upload(
     };
   }
 
-  if (uploadGstCertificateFile.status == false) {
-    return {
-      status: uploadGstCertificateFile.status,
-      msg: uploadGstCertificateFile.msg,
-    };
-  }
+  // if (uploadGstCertificateFile.status == false) {
+  //   return {
+  //     status: uploadGstCertificateFile.status,
+  //     msg: uploadGstCertificateFile.msg,
+  //   };
+  // }
 
   if (uploadSignatureFile.status == false) {
     return {
@@ -276,25 +276,25 @@ function uploadPanFront(time, panFront) {
   };
 }
 
-function uploadGstCertificate(time, gstCertificate) {
-  gstCertificate.mv(
-    "./uploaded_files/GST_certificate/" + time + "_" + gstCertificate.name,
-    function (err) {
-      if (err) {
-        return {
-          status: false,
-          msg: "err",
-        };
-      }
+// function uploadGstCertificate(time, gstCertificate) {
+//   gstCertificate.mv(
+//     "./uploaded_files/GST_certificate/" + time + "_" + gstCertificate.name,
+//     function (err) {
+//       if (err) {
+//         return {
+//           status: false,
+//           msg: "err",
+//         };
+//       }
 
-      console.log("GST Certificate File Uploaded");
-    }
-  );
-  return {
-    status: true,
-    msg: "GST Certificate File Uploaded",
-  };
-}
+//       console.log("GST Certificate File Uploaded");
+//     }
+//   );
+//   return {
+//     status: true,
+//     msg: "GST Certificate File Uploaded",
+//   };
+// }
 
 function uploadSignature(time, signature) {
   signature.mv(
