@@ -51,10 +51,10 @@ function sub() {
         alert("PAN field can't be blank !");
         return 0;
     }
-    if (gstNumber === "") {
-        alert("GST field can't be blank !");
-        return 0;
-    }
+    // if (gstNumber === "") {
+    //     alert("GST field can't be blank !");
+    //     return 0;
+    // }
 
     if (document.getElementById("aadhaarFront").files.length == 0) {
         alert("Aadhaar Front can't be blank !");

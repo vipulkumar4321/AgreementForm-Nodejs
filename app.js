@@ -5,6 +5,12 @@ var bodyParser = require("body-parser"),
   AWS = require("aws-sdk"),
   moment = require("moment"),
   app = express();
+const requestIp = require("request-ip");
+var ip;
+var ipMiddleware = function (req, res, next) {
+  ip = requestIp.getClientIp(req); // on localhost > 127.0.0.1
+  next();
+};
 
 require("dotenv/config");
 app.set("view engine", "ejs");
@@ -22,7 +28,8 @@ var time = moment().format("LT");
 
 //DB connnection
 mongoose.connect(
-  process.env.DB_CONNECTION, {
+  process.env.DB_CONNECTION,
+  {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   },
@@ -41,7 +48,7 @@ var vendorSchema = new mongoose.Schema({
   whatsappNumber: String,
   panNumber: String,
   gstNumber: String,
-  ip: String
+  ip: String,
 });
 
 var Vendor = mongoose.model("Vendor", vendorSchema);
@@ -56,18 +63,22 @@ app.get("/step1", function (req, res) {
   res.render("step1");
 });
 
-app.get("/agreement", function (req, res) {
+app.get("/agreement", ipMiddleware, function (req, res) {
   res.render("index", {
     date: date,
     time: time,
   });
-  var getClientIp = function (req) {
-    return (req.headers["X-Forwarded-For"] ||
-        req.headers["x-forwarded-for"] ||
-        '').split(',')[0] ||
-      req.client.remoteAddress;
-  };
-  ip = req.headers["X-Forwarded-For"] || req.connection.remoteAddress;
+  console.log(ip);
+  // var getClientIp = function (req) {
+  //   return (
+  //     (
+  //       req.headers["X-Forwarded-For"] ||
+  //       req.headers["x-forwarded-for"] ||
+  //       ""
+  //     ).split(",")[0] || req.client.remoteAddress
+  //   );
+  // };
+  // ip = req.headers["X-Forwarded-For"] || req.connection.remoteAddress;
 });
 
 app.post("/post", function (req, res) {
@@ -114,7 +125,7 @@ app.post("/post", function (req, res) {
       whatsappNumber: whatsappNumber,
       panNumber: panNumber,
       gstNumber: gstNumber,
-      ip: ip
+      ip: ip,
     };
     Vendor.create(newVendor, function (err, newlyCreated) {
       if (err) {
@@ -359,8 +370,8 @@ app.get("/otp", function (req, res) {
   };
 
   var publishTextPromise = new AWS.SNS({
-      apiVersion: "2010-03-31",
-    })
+    apiVersion: "2010-03-31",
+  })
     .publish(params)
     .promise();
 
@@ -383,8 +394,6 @@ app.get("/thanks", function (req, res) {
 // app.get("/*", function (req, res) {
 //   res.redirect("/agreement");
 // });
-
-
 
 app.listen(9000, function () {
   console.log("Server is listening...");
