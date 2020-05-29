@@ -17,7 +17,6 @@ app.use(
 );
 
 var ip;
-
 var date = moment().format("dddd, MMMM Do, YYYY");
 var time = moment().format("LT");
 
