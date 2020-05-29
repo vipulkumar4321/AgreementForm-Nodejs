@@ -16,7 +16,7 @@
             $('input[type="checkbox"]').click(function () {
                 if ($(this).prop("checked") == true) {
                     $("#result").toggleClass("disabled");
-                    $("form").attr("action", "/thanks");
+                    $("form").attr("action", "/otp");
                 } else if ($(this).prop("checked") == false) {
                     $("#result").toggleClass("disabled");
                 }
@@ -35,78 +35,117 @@
     <div class="container companyDetail ml-auto mr-auto">
         <div class="p-4">
             <div class="form-group">
-                <label for="inputTypeOfVenue">Type Of Venue</label>
-                <input type="text" class="form-control" id="inputTypeOfVenue" name="cTypeOfVenue"
-                    placeholder="Photographer, Decorator, Caterers, Mehendi, etc." />
+                <label for="inputTypeOfVenue" class="required">Type of Service Provider</label>
+                <select class="form-control" id="inputTypeOfVenue" name="cTypeOfVenue">
+                    <option value="" disabled selected hidden>Photographer, Decorator, Caterers, Mehendi, etc.</option>
+                    <option>Anchor/Host</option>
+                    <option>Balloons Service</option>
+                    <option>Band/Baja/Ghodawalla</option>
+                    <option>Bride/Groom Designer</option>
+                    <option>Caterers</option>
+                    <option>Choreographer</option>
+                    <option>Clothers Rental Service</option>
+                    <option>Corporate Event Equipments Service</option>
+                    <option>DJ's</option>
+                    <option>Decorators</option>
+                    <option>Event Entertainers</option>
+                    <option>Event Fragrance Service</option>
+                    <option>Event Management Comapany</option>
+                    <option>Firework Service</option>
+                    <option>Florist</option>
+                    <option>Gifting Service</option>
+                    <option>Honeymoon Package Provider</option>
+                    <option>Invitation Card Designer</option>
+                    <option>Jewellery Designer</option>
+                    <option>Makeup Artist</option>
+                    <option>Mehendi Artist</option>
+                    <option>Photographer</option>
+                    <option>Priest</option>
+                    <option>Security Service</option>
+                    <option>Special Category</option>
+                    <option>Transport Service</option>
+                </select>
+                <!-- <input type="text" class="form-control" id="inputTypeOfVenue" name="cTypeOfVenue"
+                    placeholder="Photographer, Decorator, Caterers, Mehendi, etc." /> -->
             </div>
+
             <div class="form-group">
-                <label for="inputOwnerName">Owner Name</label>
+                <label for="inputOwnerName" class="required">Name</label>
                 <input type="text" class="form-control" id="inputOwnerName" name="cOwnerName" placeholder="Full Name" />
             </div>
 
             <div class="form-group mt-4">
-                <label for="companyName">Name of the company</label>
+                <label for="companyName" class="required">Name of the company</label>
                 <input required type="text" class="form-control" id="composedName" name="cName"
                     placeholder="Company Name" required />
             </div>
             <div class="form-group">
-                <label for="inputAddress">Address</label>
+                <label for="inputAddress" class="required">Address</label>
                 <input type="text" class="form-control" id="inputAddress" name="cAddress" placeholder="1234 Main St" />
             </div>
             <div class="form-group">
-                <label for="inputEmail">Email</label>
+                <label for="inputEmail" class="required">Email</label>
                 <input type="email" class="form-control" id="inputEmail" name="cEmail" placeholder="abc123@xyz.com" />
             </div>
             <div class="form-group">
-                <label for="contactNumber">Contact Number</label>
+                <label for="contactNumber" class="required">Contact Number</label>
                 <input type="tel" class="form-control" id="contactNumber" name="cContactNumber"
-                    placeholder="Contact Number" />
+                    placeholder="10 Digit mobile Number" />
             </div>
             <div class="form-group">
-                <label for="whatsappNumber">Whatsapp Number</label>
+                <label for="whatsappNumber" class="required">Whatsapp Number</label>
                 <input type="tel" class="form-control" id="whatsappNumber" name="cWhatsappNumber"
                     placeholder="Whatsapp Number" />
             </div>
 
             <!-- Aaadhar card -->
-            <div class="form-group">
-                <label for="aadhaarFront">Aadhaar Front</label>
+            <div class="form-group mt-5">
+                <label for="aadhaarFront" class="required">Aadhaar Front</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cAadhaarFront"
                     id="aadhaarFront" />
             </div>
             <div class="form-group">
-                <label for="aadhaarBack">Aadhaar back</label>
+                <label for="aadhaarBack" class="required">Aadhaar Back</label>
                 <input type="file" accept="image/*" class="form-control-file" name="cAadharBack" id="aadhaarBack" />
             </div>
             <!-- PAN card -->
             <div class="form-group mt-5">
-                <label for="panFront">PAN Front</label>
+                <label for="panNumber" class="required">PAN</label>
+                <input type="text" class="form-control" id="panNumber" name="cPAN" placeholder="10 Digit Number" />
+            </div>
+            <div class="form-group">
+                <label for="panFront" class="required">PAN Front</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cPANFront" id="panFront" />
             </div>
             <!-- GST Certificates -->
             <div class="form-group mt-5">
+                <label for="gstNumber">GST</label>
+                <input type="text" class="form-control" id="gstNumber" name="cGST" placeholder="15 Digit Number" />
+            </div>
+            <div class="form-group">
                 <label for="gstCertificate">GST Certificate</label>
                 <input type="file" accept="image/*" class="form-control-file" name="cGSTCertificate"
                     id="gstCertificate" />
             </div>
             <!-- Cancelled cheque -->
             <div class="form-group mt-5">
-                <label for="cheque">Cancelled Cheque</label>
+                <label for="cheque" class="required">Cancelled Cheque</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cCheque" id="cheque" />
             </div>
             <!-- signature -->
             <div class="form-group mt-5">
-                <label for="signature">signature</label>
+                <label for="signature" class="required">Signature</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cSignature" id="signature" />
             </div>
             <!-- photo -->
-            <div class="form-group mt-5">
+            <!-- <div class="form-group mt-5">
                 <label for="photo">Photo</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cPhoto" id="photo" />
-            </div>
+            </div> -->
 
             <div class="container mt-4">
                 <p class="check display-4">
+                    <p>all <spam style="color: red;">*</spam> fields are mandatory</p>
                     <input type="checkbox" /> The Details filled in this form are true and to the best of my knowledge
                 </p>
                 <div class="center">

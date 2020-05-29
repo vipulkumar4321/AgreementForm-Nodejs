@@ -8,6 +8,8 @@ function sub() {
     const email = $("#inputEmail").val();
     const contactNumber = $("#contactNumber").val();
     const whatsappNumber = $("#whatsappNumber").val();
+    const panNumber = $("#panNumber").val();
+    const gstNumber = $("#gstNumber").val();
 
     const aadhaarFront = $("#aadhaarFront")[0].files[0];
     const aadhaarBack = $("#aadhaarBack")[0].files[0];
@@ -15,19 +17,18 @@ function sub() {
     const gstCertificate = $("#gstCertificate")[0].files[0];
     const cheque = $("#cheque")[0].files[0];
     const signature = $("#signature")[0].files[0];
-    const photo = $("#photo")[0].files[0];
+    // const photo = $("#photo")[0].files[0];
 
-
-    if (venueType === "") {
-        alert("Venue Type can't be blank !");
+    if (venueType === null) {
+        alert("Type of Service Provider can't be blank !");
         return 0;
     }
     if (ownerName === "") {
-        alert("Owner name can't be blank !");
+        alert("Name can't be blank !");
         return 0;
     }
     if (companyName === "") {
-        alert("Company name can't be blank !");
+        alert("Company Name can't be blank !");
         return 0;
     }
     if (address === "") {
@@ -39,13 +40,43 @@ function sub() {
         return 0;
     }
     if (contactNumber === "") {
-        alert("Contact number can't be blank !");
+        alert("Contact Number can't be blank !");
         return 0;
     }
     if (whatsappNumber === "") {
-        alert("Whatsapp number can't be blank !");
+        alert("Whatsapp Number can't be blank !");
         return 0;
     }
+    if (panNumber === "") {
+        alert("PAN field can't be blank !");
+        return 0;
+    }
+    if (gstNumber === "") {
+        alert("GST field can't be blank !");
+        return 0;
+    }
+
+    if (document.getElementById("aadhaarFront").files.length == 0) {
+        alert("Aadhaar Front can't be blank !");
+        return 0;
+    }
+    if (document.getElementById("aadhaarBack").files.length == 0) {
+        alert("Aadhaar Back can't be blank !");
+        return 0;
+    }
+    if (document.getElementById("panFront").files.length == 0) {
+        alert("PAN Front can't be blank !");
+        return 0;
+    }
+    if (document.getElementById("cheque").files.length == 0) {
+        alert("Cancelled Cheque can't be blank !");
+        return 0;
+    }
+    if (document.getElementById("signature").files.length == 0) {
+        alert("Signature can't be blank !");
+        return 0;
+    }
+
 
     form.append("venueType", venueType);
     form.append("ownerName", ownerName);
@@ -54,13 +85,15 @@ function sub() {
     form.append("email", email);
     form.append("contactNumber", contactNumber);
     form.append("whatsappNumber", whatsappNumber);
+    form.append("panNumber", panNumber);
+    form.append("gstNumber", gstNumber);
     form.append("aadhaarFront", aadhaarFront);
     form.append("aadhaarBack", aadhaarBack);
     form.append("panFront", panFront);
     form.append("gstCertificate", gstCertificate);
     form.append("cheque", cheque);
     form.append("signature", signature);
-    form.append("photo", photo);
+    // form.append("photo", photo);
 
     var settings = {
         url: "/post",
@@ -77,7 +110,7 @@ function sub() {
         console.log(typeof response);
         if (response.status == true) {
             console.log(response.msg);
-            window.location = "/thanks";
+            window.location = "/otp";
         } else {
             console.log(response.msg);
         }
