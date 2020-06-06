@@ -9,7 +9,8 @@ body {
 
 .center {
   text-align: center;
-  margin: 15px auto 5px auto;
+  /* margin: 15px auto 5px auto; */
+  margin: auto;
 }
 
 hr.style {
@@ -76,9 +77,39 @@ hr.style:after {
 
 /* thanks */
 .vcenter {
-  margin-top: 15%;
+  margin-top: 10%;
+  align-items: center;
+}
+
+.sign {
+  object-fit: contain;
+  max-height: 18%;
+  max-width: 18%;
 }
 
 /* .textdeco {
   text-shadow: 2px 1px 1px black;
 } */
+
+.loader {
+  visibility: hidden;
+  border: 16px solid #f3f3f3;
+  /* Light grey */
+  border-top: 16px solid #3498db;
+  /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

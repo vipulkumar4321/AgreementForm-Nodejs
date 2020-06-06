@@ -6,6 +6,8 @@ var bodyParser = require("body-parser"),
   moment = require("moment"),
   app = express();
 const requestIp = require("request-ip");
+const axios = require("axios");
+const imageToBase64 = require("image-to-base64");
 var ip;
 var ipMiddleware = function (req, res, next) {
   ip = requestIp.getClientIp(req); // on localhost > 127.0.0.1
@@ -23,15 +25,18 @@ app.use(
 );
 
 var ip;
-var date = moment().format("dddd, MMMM Do, YYYY");
-var time = moment().format("LT");
+var date;
+var time;
+var timeStamp;
+var vCode;
 
 //DB connnection
 mongoose.connect(
-  process.env.DB_CONNECTION,
-  {
+  process.env.DB_CONNECTION, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
   },
   () => console.log("connected to db...")
 );
@@ -39,6 +44,8 @@ mongoose.connect(
 //Schema setup
 var vendorSchema = new mongoose.Schema({
   time: String,
+  timeStamp: String,
+  vCode: String,
   venueType: String,
   ownerName: String,
   name: String,
@@ -48,15 +55,29 @@ var vendorSchema = new mongoose.Schema({
   whatsappNumber: String,
   panNumber: String,
   gstNumber: String,
+  accountNumber: String,
+  ifscCode: String,
+  accountHolderName: String,
+
   ip: String,
 });
 
 var Vendor = mongoose.model("Vendor", vendorSchema);
 
-var contactNumber;
+var venueType,
+  contactNumber,
+  ownerName,
+  address,
+  email,
+  name,
+  panNumber,
+  gstNumber,
+  signature;
+
+var signatureAddress;
 
 app.get("/", function (req, res) {
-  res.redirect("/agreement");
+  res.render("home");
 });
 
 app.get("/step1", function (req, res) {
@@ -64,9 +85,10 @@ app.get("/step1", function (req, res) {
 });
 
 app.get("/agreement", ipMiddleware, function (req, res) {
+  date = moment().format("dddd, MMMM Do, YYYY");
   res.render("index", {
     date: date,
-    time: time,
+    time: moment().format("LT"),
   });
   console.log(ip);
   // var getClientIp = function (req) {
@@ -82,29 +104,32 @@ app.get("/agreement", ipMiddleware, function (req, res) {
 });
 
 app.post("/post", function (req, res) {
-  var venueType = req.body.venueType;
-  var ownerName = req.body.ownerName;
-  var name = req.body.companyName;
-  var address = req.body.address;
-  var email = req.body.email;
+  venueType = req.body.venueType;
+  ownerName = req.body.ownerName;
+  name = req.body.companyName;
+  address = req.body.address;
+  email = req.body.email;
   contactNumber = req.body.contactNumber;
   var whatsappNumber = req.body.whatsappNumber;
-  var panNumber = req.body.panNumber;
-  var gstNumber = req.body.gstNumber;
-  var aadhaarFront = req.files.aadhaarFront;
-  var aadhaarBack = req.files.aadhaarBack;
+  panNumber = req.body.panNumber;
+  gstNumber = req.body.gstNumber;
+  // var aadhaarFront = req.files.aadhaarFront;
+  // var aadhaarBack = req.files.aadhaarBack;
   var panFront = req.files.panFront;
   // var gstCertificate = req.files.gstCertificate;
+  var accountNumber = req.body.accountNumber;
+  var ifscCode = req.body.IFSCCode;
+  var accountHolderName = req.body.accountHolderName;
   var cheque = req.files.cheque;
-  var signature = req.files.signature;
+  signature = req.files.signature;
   // var photo = req.files.photo;
 
-  var time = new Date().getTime().toString();
+  time = new Date().getTime().toString();
 
   const uploadFile = upload(
     time,
-    aadhaarFront,
-    aadhaarBack,
+    // aadhaarFront,
+    // aadhaarBack,
     panFront,
     // gstCertificate,
     signature,
@@ -116,6 +141,8 @@ app.post("/post", function (req, res) {
   if (uploadFile.status == true) {
     var newVendor = {
       time: time,
+      timeStamp: "",
+      vCode: "",
       venueType: venueType,
       ownerName: ownerName,
       name: name,
@@ -125,6 +152,9 @@ app.post("/post", function (req, res) {
       whatsappNumber: whatsappNumber,
       panNumber: panNumber,
       gstNumber: gstNumber,
+      accountNumber: accountNumber,
+      ifscCode: ifscCode,
+      accountHolderName: accountHolderName,
       ip: ip,
     };
     Vendor.create(newVendor, function (err, newlyCreated) {
@@ -147,34 +177,34 @@ app.post("/post", function (req, res) {
 
 function upload(
   time,
-  aadhaarFront,
-  aadhaarBack,
+  // aadhaarFront,
+  // aadhaarBack,
   panFront,
   // gstCertificate,
   signature,
   cheque
 ) {
-  const uploadAadhaarFrontFile = uploadAadhaarFront(time, aadhaarFront);
-  const uploadAadhaarBackFile = uploadAadhaarBack(time, aadhaarBack);
+  // const uploadAadhaarFrontFile = uploadAadhaarFront(time, aadhaarFront);
+  // const uploadAadhaarBackFile = uploadAadhaarBack(time, aadhaarBack);
   const uploadPanFrontFile = uploadPanFront(time, panFront);
   // const uploadGstCertificateFile = uploadGstCertificate(time, gstCertificate);
   const uploadSignatureFile = uploadSignature(time, signature);
   // const uploadPhotoFile = uploadPhoto(time, photo);
   const uploadChequeFile = uploadCheque(time, cheque);
 
-  if (uploadAadhaarFrontFile.status == false) {
-    return {
-      status: uploadAadhaarFile.status,
-      msg: uploadAadhaarFile.msg,
-    };
-  }
+  // if (uploadAadhaarFrontFile.status == false) {
+  //   return {
+  //     status: uploadAadhaarFile.status,
+  //     msg: uploadAadhaarFile.msg,
+  //   };
+  // }
 
-  if (uploadAadhaarBackFile.status == false) {
-    return {
-      status: uploadAadhaarFile.status,
-      msg: uploadAadhaarFile.msg,
-    };
-  }
+  // if (uploadAadhaarBackFile.status == false) {
+  //   return {
+  //     status: uploadAadhaarFile.status,
+  //     msg: uploadAadhaarFile.msg,
+  //   };
+  // }
 
   if (uploadPanFrontFile.status == false) {
     return {
@@ -217,44 +247,44 @@ function upload(
   };
 }
 
-function uploadAadhaarFront(time, aadhaarFront) {
-  aadhaarFront.mv(
-    "./uploaded_files/Aadhaar/front/" + time + "_" + aadhaarFront.name,
-    function (err) {
-      if (err) {
-        return {
-          status: false,
-          msg: err,
-        };
-      }
-      console.log("Aadhaar Front File Uploaded");
-    }
-  );
-  return {
-    status: true,
-    msg: "Aadhaar Front File Uploaded",
-  };
-}
+// function uploadAadhaarFront(time, aadhaarFront) {
+//   aadhaarFront.mv(
+//     "./uploaded_files/Aadhaar/front/" + time + "_" + aadhaarFront.name,
+//     function (err) {
+//       if (err) {
+//         return {
+//           status: false,
+//           msg: err,
+//         };
+//       }
+//       console.log("Aadhaar Front File Uploaded");
+//     }
+//   );
+//   return {
+//     status: true,
+//     msg: "Aadhaar Front File Uploaded",
+//   };
+// }
 
-function uploadAadhaarBack(time, aadhaarBack) {
-  aadhaarBack.mv(
-    "./uploaded_files/Aadhaar/back/" + time + "_" + aadhaarBack.name,
-    function (err) {
-      if (err) {
-        return {
-          status: false,
-          msg: err,
-        };
-      }
+// function uploadAadhaarBack(time, aadhaarBack) {
+//   aadhaarBack.mv(
+//     "./uploaded_files/Aadhaar/back/" + time + "_" + aadhaarBack.name,
+//     function (err) {
+//       if (err) {
+//         return {
+//           status: false,
+//           msg: err,
+//         };
+//       }
 
-      console.log("Aadhaar Back File Uploaded");
-    }
-  );
-  return {
-    status: true,
-    msg: "Aadhaar Back File Uploaded",
-  };
-}
+//       console.log("Aadhaar Back File Uploaded");
+//     }
+//   );
+//   return {
+//     status: true,
+//     msg: "Aadhaar Back File Uploaded",
+//   };
+// }
 
 function uploadPanFront(time, panFront) {
   panFront.mv(
@@ -297,6 +327,8 @@ function uploadPanFront(time, panFront) {
 // }
 
 function uploadSignature(time, signature) {
+  signatureAddress =
+    "./uploaded_files/signature/" + time + "_" + signature.name;
   signature.mv(
     "./uploaded_files/signature/" + time + "_" + signature.name,
     function (err) {
@@ -334,21 +366,26 @@ function uploadSignature(time, signature) {
 // }
 
 function uploadCheque(time, cheque) {
-  cheque.mv("./uploaded_files/Cheque/" + time + "_" + cheque.name, function (
-    err
-  ) {
-    if (err) {
-      return {
-        status: false,
-        msg: err,
-      };
-    }
+  try {
+    cheque.mv("./uploaded_files/Cheque/" + time + "_" + cheque.name, function (
+      err
+    ) {
+      if (err) {
+        return {
+          status: false,
+          msg: err,
+        };
+      }
 
-    console.log("Cheque File uploaded!");
-  });
+      console.log("Cheque File uploaded!");
+    });
+  } catch (e) {
+    console.log("no cheque to upload!");
+    // console.log(e);
+  }
   return {
     status: true,
-    msg: "Cheque File uploaded!",
+    msg: "no cheque to upload!",
   };
 }
 
@@ -370,8 +407,8 @@ app.get("/otp", function (req, res) {
   };
 
   var publishTextPromise = new AWS.SNS({
-    apiVersion: "2010-03-31",
-  })
+      apiVersion: "2010-03-31",
+    })
     .publish(params)
     .promise();
 
@@ -387,13 +424,62 @@ app.get("/otp", function (req, res) {
   // res.render("otp");
 });
 
+app.get("/wait", function (req, res) {
+  imageToBase64(signatureAddress) // you can also to use url
+    .then((res) => {
+      axios
+        .post(process.env.PDF_API, {
+          category: venueType,
+          name: ownerName,
+          email: email,
+          cnumber: contactNumber,
+          ip_adr: ip,
+          address: address,
+          companyName: name,
+          pan: panNumber,
+          gstin: gstNumber,
+          signature: res,
+        })
+        .then(function (response) {
+          console.log("email automation...");
+          timeStamp = response["data"]["result"]["timestamp"];
+          vCode = response["data"]["result"]["vcode"];
+
+          console.log(time);
+          const filter = {
+            time: time
+          };
+          const update = {
+            $set: {
+              timeStamp: timeStamp,
+              vCode: vCode
+            }
+          };
+          Vendor.findOneAndUpdate(filter, update, function (err, doc) {
+            if (err) {
+              console.log("Something wrong when updating data!");
+            }
+            console.log(doc);
+          });
+
+
+
+
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      console.log("Converting in base64..."); //cGF0aC90by9maWxlLmpwZw==
+    })
+    .catch((err) => {
+      console.log(err); //Exepection error....
+    });
+  res.redirect("/thanks");
+});
+
 app.get("/thanks", function (req, res) {
   res.render("thanks");
 });
-
-// app.get("/*", function (req, res) {
-//   res.redirect("/agreement");
-// });
 
 app.listen(9000, function () {
   console.log("Server is listening...");

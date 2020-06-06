@@ -1,4 +1,8 @@
 function sub() {
+  // $("#loader").attr("visibility", "visible");
+  $(".loader").css("visibility", "visible");
+  // $(".loader").attr("visibility", "visible");
+
   var form = new FormData();
 
   const venueType = $("#inputTypeOfVenue").val();
@@ -10,9 +14,11 @@ function sub() {
   const whatsappNumber = $("#whatsappNumber").val();
   const panNumber = $("#panNumber").val();
   const gstNumber = $("#gstNumber").val();
-
-  const aadhaarFront = $("#aadhaarFront")[0].files[0];
-  const aadhaarBack = $("#aadhaarBack")[0].files[0];
+  const accountNumber = $("#accountNumber").val();
+  const ifscCode = $("#IFSCCode").val();
+  const accountHolderName = $("#accountHolderName").val();
+  // const aadhaarFront = $("#aadhaarFront")[0].files[0];
+  // const aadhaarBack = $("#aadhaarBack")[0].files[0];
   const panFront = $("#panFront")[0].files[0];
   //   const gstCertificate = $("#gstCertificate")[0].files[0];
   const cheque = $("#cheque")[0].files[0];
@@ -51,27 +57,39 @@ function sub() {
     alert("PAN field can't be blank !");
     return 0;
   }
+
+  if (accountNumber === "") {
+    alert("Account Number field can't be blank !");
+    return 0;
+  }
+  if (ifscCode === "") {
+    alert("IFSC code field can't be blank !");
+    return 0;
+  }
+  if (accountHolderName === "") {
+    alert("Account Holder Name field can't be blank !");
+    return 0;
+  }
   // if (gstNumber === "") {
   //     alert("GST field can't be blank !");
   //     return 0;
   // }
 
-  if (document.getElementById("aadhaarFront").files.length == 0) {
-    alert("Aadhaar Front can't be blank !");
-    return 0;
-  }
-  if (document.getElementById("aadhaarBack").files.length == 0) {
-    alert("Aadhaar Back can't be blank !");
-    return 0;
-  }
+  // if (document.getElementById("aadhaarFront").files.length == 0) {
+  //   alert("Aadhaar Front can't be blank !");
+  //   return 0;
+  // }
+  // if (document.getElementById("aadhaarBack").files.length == 0) {
+  //   alert("Aadhaar Back can't be blank !");
+  //   return 0;
+  // }
   if (document.getElementById("panFront").files.length == 0) {
     alert("PAN Front can't be blank !");
     return 0;
   }
-  if (document.getElementById("cheque").files.length == 0) {
-    alert("Cancelled Cheque can't be blank !");
-    return 0;
-  }
+  // if (document.getElementById("cheque").files.length == 0) {
+  //   flag = -1;
+  // }
   if (document.getElementById("signature").files.length == 0) {
     alert("Signature can't be blank !");
     return 0;
@@ -92,8 +110,12 @@ function sub() {
   form.append("whatsappNumber", whatsappNumber);
   form.append("panNumber", panNumber);
   form.append("gstNumber", gstNumber);
-  form.append("aadhaarFront", aadhaarFront);
-  form.append("aadhaarBack", aadhaarBack);
+
+  form.append("accountNumber", accountNumber);
+  form.append("IFSCCode", ifscCode);
+  form.append("accountHolderName", accountHolderName);
+  // form.append("aadhaarFront", aadhaarFront);
+  // form.append("aadhaarBack", aadhaarBack);
   form.append("panFront", panFront);
   //   form.append("gstCertificate", gstCertificate);
   form.append("cheque", cheque);

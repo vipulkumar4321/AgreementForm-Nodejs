@@ -16,7 +16,8 @@
         $(document).ready(function () {
             $('#check').click(function () {
                 if ($('#otp').val() == $('#otpFrom').val()) {
-                    window.location = "/thanks";
+                    $(".loader").css("visibility", "visible");
+                    window.location = "/wait";
                 } else {
                     alert('Wrong OTP, try again !!!');
                 }
@@ -35,6 +36,8 @@
         <button id="check" class="btn btn-primary">Check to Proceed</button>
         <a href="/otp">Resend OTP (wait for 1 min)</a>
     </div>
+    <div class="loader"></div>
+
 </body>
 
 </html>

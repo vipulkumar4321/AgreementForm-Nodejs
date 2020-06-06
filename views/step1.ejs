@@ -34,6 +34,9 @@
 
     <div class="container companyDetail ml-auto mr-auto">
         <div class="p-4">
+            <p>
+                <spam style="color: red;">*</spam> Required
+            </p>
             <div class="form-group">
                 <label for="inputTypeOfVenue" class="required">Type of Service Provider</label>
                 <select class="form-control" id="inputTypeOfVenue" name="cTypeOfVenue">
@@ -99,7 +102,7 @@
             </div>
 
             <!-- Aaadhar card -->
-            <div class="form-group mt-5">
+            <!-- <div class="form-group mt-5">
                 <label for="aadhaarFront" class="required">Aadhaar Front</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cAadhaarFront"
                     id="aadhaarFront" />
@@ -107,7 +110,7 @@
             <div class="form-group">
                 <label for="aadhaarBack" class="required">Aadhaar Back</label>
                 <input type="file" accept="image/*" class="form-control-file" name="cAadharBack" id="aadhaarBack" />
-            </div>
+            </div> -->
             <!-- PAN card -->
             <div class="form-group mt-5">
                 <label for="panNumber" class="required">PAN</label>
@@ -127,15 +130,36 @@
                 <input type="file" accept="image/*" class="form-control-file" name="cGSTCertificate"
                     id="gstCertificate" />
             </div> -->
+
+            <!-- Bank Details -->
+            <div class="form-group">
+                <label for="accountNumber" class="required">Bank Account Number</label>
+                <input type="text" class="form-control" id="accountNumber" name="caccountNumber"
+                    placeholder="Bank Account Number" />
+            </div>
+            <div class="form-group">
+                <label for="IFSCCode" class="required">IFSC Code</label>
+                <input type="text" class="form-control" id="IFSCCode" name="cIFSCCode" placeholder="IFSC Code" />
+            </div>
+            <div class="form-group">
+                <label for="accountHolderName" class="required">Account Holder Name</label>
+                <input type="text" class="form-control" id="accountHolderName" name="caccountHolderName"
+                    placeholder="Account Holder Name" />
+            </div>
+
             <!-- Cancelled cheque -->
             <div class="form-group mt-5">
-                <label for="cheque" class="required">Cancelled Cheque</label>
+                <label for="cheque">Cancelled Cheque</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cCheque" id="cheque" />
             </div>
             <!-- signature -->
             <div class="form-group mt-5">
                 <label for="signature" class="required">Signature</label>
                 <input type="file" accept="image/*" class="form-control-file mb-1" name="cSignature" id="signature" />
+            </div>
+            <div>
+                <p>Signature Example:</p>
+                <img class="sign" src="/signature.jpg" alt="Signature Example">
             </div>
             <!-- photo -->
             <!-- <div class="form-group mt-5">
@@ -145,7 +169,7 @@
 
             <div class="container mt-4">
                 <p class="check display-4">
-                    <p>all <spam style="color: red;">*</spam> fields are mandatory</p>
+
                     <input type="checkbox" /> The Details filled in this form are true and to the best of my knowledge
                 </p>
                 <div class="center">
@@ -153,6 +177,7 @@
                         Check to Proceed
                     </button> -->
                     <button onclick="sub()" id="result" class="btn btn-primary disabled">Check to Proceed</button>
+                    <div class="loader"></div>
                 </div>
             </div>
 
