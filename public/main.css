@@ -30,7 +30,7 @@ hr.style:after {
   top: -0.7em;
   font-size: 2em;
   padding: 0 0.25em;
-  background: white;
+  /* background: white; */
 }
 
 .terms {
@@ -69,10 +69,12 @@ hr.style:after {
 }
 
 /* step1.ejs */
-
 .companyDetail {
   margin-top: 50px;
   border: 1px solid #d1c2af;
+  box-shadow: 0 4px 8px 0 rgba(217, 185, 144, 0.3), 0 6px 20px 0 rgba(243, 210, 170, 0.29);
+  border-radius: 25px;
+  max-width: 85%;
 }
 
 /* thanks */
@@ -83,8 +85,8 @@ hr.style:after {
 
 .sign {
   object-fit: contain;
-  max-height: 18%;
-  max-width: 18%;
+  max-height: 30%;
+  max-width: 30%;
 }
 
 /* .textdeco {
@@ -112,4 +114,8 @@ hr.style:after {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.otp-form {
+  visibility: hidden;
 }

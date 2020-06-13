@@ -26,14 +26,18 @@
 </head>
 
 <body>
-    <div class="center">
+    <div class="">
         <img src="https://s3.ap-south-1.amazonaws.com/venuefy.images/venuefy-logo.png" alt="Venuefy" />
     </div>
 
-    <hr class="style" />
+    <h3 class="center mt-5">
+        VENUEFY NON-VENUE SERVICE PROVIDER
+        AGREEMENT
+    </h3>
+    <!-- <hr class="style" /> -->
 
-    <div class="container companyDetail ml-auto mr-auto">
-        <div class="p-4">
+    <div class="container companyDetail mb-5">
+        <div class="p-2">
             <p>
                 <spam style="color: red;">*</spam> Required
             </p>
@@ -43,11 +47,11 @@
                     <option value="" disabled selected hidden>Photographer, Decorator, Caterers, Mehendi, etc.</option>
                     <option>Anchor/Host</option>
                     <option>Balloons Service</option>
-                    <option>Band/Baja/Ghodawalla</option>
+                    <option>Band/Baja/Ghodiwalla</option>
                     <option>Bride/Groom Designer</option>
                     <option>Caterers</option>
                     <option>Choreographer</option>
-                    <option>Clothers Rental Service</option>
+                    <option>Clothes Rental Service</option>
                     <option>Corporate Event Equipments Service</option>
                     <option>DJ's</option>
                     <option>Decorators</option>
@@ -176,14 +180,45 @@
                     <!-- <button type="submit" onclick="sub()" id="result" class="btn btn-primary disabled">
                         Check to Proceed
                     </button> -->
-                    <button onclick="sub()" id="result" class="btn btn-primary disabled">Check to Proceed</button>
-                    <div class="loader"></div>
+                    <button onclick="otpSend()" id="result" class="btn btn-primary disabled">Send OTP</button>
                 </div>
             </div>
+            <div class="otp-form mt-3">
+                <div class="form-group center">
+                    <label for="otp">Enter OTP</label><br>
+                    <input type="text" id="otp" class="form-control" name="otp" placeholder="0000">
+                    <input type="text" id="otpFrom" type="hidden">
+                    <!-- <a href="/otp">Resend OTP (wait for 1 min)</a> -->
+                </div>
+                <div class="center mt-3">
+                    <button onclick="sub()" id="check" class="btn btn-primary">Proceed</button>
+                </div>
 
+                <div class="center mt-3">
+                    <button onclick="otpSend()" id="resendOTP" class="btn btn-primary disabled">Resend
+                        OTP</button>
+                    <p id="OTPTimer">30 seconds</p>
+                </div>
+
+                <div class="loader"></div>
+            </div>
             <div>
             </div>
 
 </body>
 
 </html>
+
+
+
+<!-- 
+var timeleft = 30;
+var downloadTimer = setInterval(function(){
+  if(timeleft <= 0){
+    clearInterval(downloadTimer);
+     $("#resendOTP").toggleClass("disabled");
+  } else {
+    $("#OTPTimer").innerHTML = timeleft + " seconds";
+  }
+  timeleft -= 1;
+}, 1000); -->
