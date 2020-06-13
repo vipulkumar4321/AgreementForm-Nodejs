@@ -36,6 +36,8 @@ hr.style:after {
 .terms {
   margin-top: 50px;
   border: 1px solid #d1c2af;
+  box-shadow: 0 4px 8px 0 rgba(217, 185, 144, 0.3), 0 6px 20px 0 rgba(243, 210, 170, 0.29);
+  border-radius: 25px;
   font-size: 1.2em;
   height: 60%;
   overflow: auto;
