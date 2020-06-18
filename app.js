@@ -6,8 +6,8 @@ const fileUpload = require("express-fileupload"),
   moment = require("moment"),
   app = express(),
   requestIp = require("request-ip"),
-  axios = require("axios"),
-  imageToBase64 = require("image-to-base64");
+  imageToBase64 = require("image-to-base64"),
+  axios = require("axios");
 
 require("dotenv/config");
 app.set("view engine", "ejs");
@@ -105,7 +105,7 @@ app.post("/otp", function (req, res) {
   });
 });
 
-app.post("/post", function (req, res) {
+app.post("/post", async function (req, res) {
   var time = new Date().getTime().toString();
 
   var venueType = req.body.venueType;
@@ -124,9 +124,8 @@ app.post("/post", function (req, res) {
   var cheque = req.files.cheque;
   var signature = req.files.signature;
 
-  var signatureAddress =
-    "./uploaded_files/signature/" + time + "_" + signature.name;
-
+  var timeStamp;
+  var vCode;
   var ip = requestIp.getClientIp(req);
 
   const uploadFile = upload(
@@ -136,11 +135,30 @@ app.post("/post", function (req, res) {
     cheque
   );
 
+  var signatureAddress =
+  "./uploaded_files/signature/gst.png";
+  var flag = 0;
+  if (uploadFile.status == true) {
+  var resp="no";
+  await imageToBase64(signatureAddress) // you can also to use url
+  .then(
+      (response) => {
+          console.log(response); //cGF0aC90by9maWxlLmpwZw== 
+          resp = response;
+      }
+  )
+  .catch(
+      (error) => {
+          console.log(error); //Exepection error....
+      }
+  );
+// resp = new Buffer(signature).toString("base64");
   // console.log(uploadFile);
 
 
-  imageToBase64(signatureAddress) // you can also to use url
-    .then((resp) => {
+  // imageToBase64(signatureAddress) 
+  //   .then((resp) => {
+      console.log(resp);
       axios
         .post(process.env.PDF_API, {
           category: venueType,
@@ -156,57 +174,66 @@ app.post("/post", function (req, res) {
         })
         .then(function (response) {
           // console.log("email automation...");
-          var timeStamp = response["data"]["result"]["timestamp"];
-          var vCode = response["data"]["result"]["vcode"];
+          timeStamp = response["data"]["result"]["timestamp"];
+          vCode = response["data"]["result"]["vcode"];
           // console.log(timeStamp);
           // console.log(vCode);
-
-          if (uploadFile.status == true) {
-            var newVendor = {
-              time: time,
-              timeStamp: timeStamp,
-              vCode: vCode,
-              venueType: venueType,
-              ownerName: ownerName,
-              name: name,
-              address: address,
-              email: email,
-              contactNumber: contactNumber,
-              whatsappNumber: whatsappNumber,
-              panNumber: panNumber,
-              gstNumber: gstNumber,
-              accountNumber: accountNumber,
-              ifscCode: ifscCode,
-              accountHolderName: accountHolderName,
-              ip: ip
-            };
-            Vendor.create(newVendor, function (err, newlyCreated) {
-              if (err) {
-                console.log(err);
-              } else {
-                // console.log("Uploaded to mongo!!!");
-                res.send({
-                  status: true,
-                  msg: uploadFile.msg,
-                });
-              }
-            });
-          } else {
-            console.log("something went wrong!!!");
-            res.send({
-              status: false,
-              msg: uploadFile.msg,
-            });
-          }
         })
         .catch(function (error) {
           console.log(error);
         });
+      }
+
+
       // console.log("Converting in base64..."); //cGF0aC90by9maWxlLmpwZw==
-    })
-    .catch((err) => {
-      console.log(err); //Exepection error....
-    });
+    // })
+    // .catch((err) => {
+    //   console.log(err); //Exepection error....
+    // });
+    if (uploadFile.status == true) {
+      var newVendor = {
+        time: time,
+        timeStamp: timeStamp,
+        vCode: vCode,
+        venueType: venueType,
+        ownerName: ownerName,
+        name: name,
+        address: address,
+        email: email,
+        contactNumber: contactNumber,
+        whatsappNumber: whatsappNumber,
+        panNumber: panNumber,
+        gstNumber: gstNumber,
+        accountNumber: accountNumber,
+        ifscCode: ifscCode,
+        accountHolderName: accountHolderName,
+        ip: ip
+      };
+      Vendor.create(newVendor, function (err, newlyCreated) {
+        if (err) {
+          console.log(err);
+        } else {
+          // console.log("Uploaded to mongo!!!");
+          flag = 1;
+        }
+      });
+    } else {
+      console.log("something went wrong!!!");
+      flag = 0;
+    }
+
+
+    if(flag === 1) {
+      res.send({
+        status: true,
+        msg: uploadFile.msg,
+      });
+    } else {
+      res.send({
+        status: false,
+        msg: uploadFile.msg,
+      });
+    }
 });
 
 function upload(
