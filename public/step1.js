@@ -18,6 +18,7 @@ function otpSend() {
   const cheque = $("#cheque")[0].files[0];
   const signature = $("#signature")[0].files[0];
 
+
   if (venueType === null) {
     alert("Type of Service Provider can't be blank !");
     $(".loader").css("visibility", "hidden");
@@ -315,40 +316,58 @@ function sub() {
     return 0;
   }
 
-  form.append("venueType", venueType);
-  form.append("ownerName", ownerName);
-  form.append("companyName", companyName);
-  form.append("address", address);
-  form.append("email", email);
-  form.append("contactNumber", contactNumber);
-  form.append("whatsappNumber", whatsappNumber);
-  form.append("panNumber", panNumber);
-  form.append("gstNumber", gstNumber);
-  form.append("accountNumber", accountNumber);
-  form.append("IFSCCode", ifscCode);
-  form.append("accountHolderName", accountHolderName);
-  form.append("panFront", panFront);
-  form.append("cheque", cheque);
-  form.append("signature", signature);
-
-  var settings = {
-    url: "/post",
-    method: "POST",
-    timeout: 0,
-    processData: false,
-    mimeType: "multipart/form-data",
-    contentType: false,
-    data: form,
-  };
-
-  $.ajax(settings).done(function (response) {
-    response = JSON.parse(response);
-    // console.log(typeof response);
-    if (response.status == true) {
-      // console.log(response.msg);
-      window.location = "/thanks";
-    } else {
-      console.log(response.msg);
+  var srcData;
+  var filesSelected = document.getElementById("signature").files;
+    if (filesSelected.length > 0) {
+      var fileToLoad = filesSelected[0];
+      var fileReader = new FileReader();
+      fileReader.onload = function(fileLoadedEvent) {
+        srcData = fileLoadedEvent.target.result; // <--- data: base64
+        // console.log(srcData);
+        postData();
+        }
+      fileReader.readAsDataURL(fileToLoad);
     }
-  });
+
+    function postData()
+    {
+      form.append("venueType", venueType);
+      form.append("ownerName", ownerName);
+      form.append("companyName", companyName);
+      form.append("address", address);
+      form.append("email", email);
+      form.append("contactNumber", contactNumber);
+      form.append("whatsappNumber", whatsappNumber);
+      form.append("panNumber", panNumber);
+      form.append("gstNumber", gstNumber);
+      form.append("accountNumber", accountNumber);
+      form.append("IFSCCode", ifscCode);
+      form.append("accountHolderName", accountHolderName);
+      form.append("panFront", panFront);
+      form.append("cheque", cheque);
+      form.append("signature", signature);
+      form.append("srcData", srcData);
+    
+    
+      var settings = {
+        url: "/post",
+        method: "POST",
+        timeout: 0,
+        processData: false,
+        mimeType: "multipart/form-data",
+        contentType: false,
+        data: form,
+      };
+    
+      $.ajax(settings).done(function (response) {
+        response = JSON.parse(response);
+        // console.log(typeof response);
+        if (response.status == true) {
+          // console.log(response.msg);
+          window.location = "/thanks";
+        } else {
+          console.log(response.msg);
+        }
+      });
+    }
 }

@@ -9,6 +9,11 @@ const fileUpload = require("express-fileupload"),
   imageToBase64 = require("image-to-base64"),
   axios = require("axios");
 
+  
+var fs = require('fs');
+const { resolve } = require("path");
+const { rejects } = require("assert");
+
 require("dotenv/config");
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -123,153 +128,185 @@ app.post("/post", async function (req, res) {
   var accountHolderName = req.body.accountHolderName;
   var cheque = req.files.cheque;
   var signature = req.files.signature;
-
+  var srcData = req.body.srcData;
   var timeStamp;
   var vCode;
   var ip = requestIp.getClientIp(req);
 
-  const uploadFile = upload(
+  // console.log(srcData);
+
+  upload2(
     time,
     panFront,
     signature,
     cheque
-  );
+  ).then(()=>{
+    console.log("File uploaded");
+    sendEmail();
+  }).catch((e)=>{
+    console.log(e);
+  })
 
-  var signatureAddress =
-  "./uploaded_files/signature/gst.png";
+function sendEmail(){
+  console.log(srcData);
   var flag = 0;
-  if (uploadFile.status == true) {
-  var resp="no";
-  await imageToBase64(signatureAddress) // you can also to use url
-  .then(
-      (response) => {
-          console.log(response); //cGF0aC90by9maWxlLmpwZw== 
-          resp = response;
-      }
-  )
-  .catch(
-      (error) => {
-          console.log(error); //Exepection error....
-      }
-  );
-// resp = new Buffer(signature).toString("base64");
-  // console.log(uploadFile);
-
-
-  // imageToBase64(signatureAddress) 
-  //   .then((resp) => {
-      console.log(resp);
-      axios
-        .post(process.env.PDF_API, {
-          category: venueType,
-          name: ownerName,
-          email: email,
-          cnumber: contactNumber,
-          ip_adr: ip,
-          address: address,
-          companyName: name,
-          pan: panNumber,
-          gstin: gstNumber,
-          signature: resp,
-        })
-        .then(function (response) {
-          // console.log("email automation...");
-          timeStamp = response["data"]["result"]["timestamp"];
-          vCode = response["data"]["result"]["vcode"];
-          // console.log(timeStamp);
-          // console.log(vCode);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      }
-
-
-      // console.log("Converting in base64..."); //cGF0aC90by9maWxlLmpwZw==
-    // })
-    // .catch((err) => {
-    //   console.log(err); //Exepection error....
-    // });
-    if (uploadFile.status == true) {
-      var newVendor = {
-        time: time,
-        timeStamp: timeStamp,
-        vCode: vCode,
-        venueType: venueType,
-        ownerName: ownerName,
-        name: name,
-        address: address,
+    axios
+      .post(process.env.PDF_API, {
+        category: venueType,
+        name: ownerName,
         email: email,
-        contactNumber: contactNumber,
-        whatsappNumber: whatsappNumber,
-        panNumber: panNumber,
-        gstNumber: gstNumber,
-        accountNumber: accountNumber,
-        ifscCode: ifscCode,
-        accountHolderName: accountHolderName,
-        ip: ip
-      };
-      Vendor.create(newVendor, function (err, newlyCreated) {
-        if (err) {
-          console.log(err);
-        } else {
-          // console.log("Uploaded to mongo!!!");
-          flag = 1;
-        }
+        cnumber: contactNumber,
+        ip_adr: ip,
+        address: address,
+        companyName: name,
+        pan: panNumber,
+        gstin: gstNumber,
+        signature: ""+srcData,
+      })
+      .then(function (response) {
+        timeStamp = response["data"]["result"]["timestamp"];
+        vCode = response["data"]["result"]["vcode"];
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-    } else {
-      console.log("something went wrong!!!");
-      flag = 0;
-    }
+    var newVendor = {
+      time: time,
+      timeStamp: timeStamp,
+      vCode: vCode,
+      venueType: venueType,
+      ownerName: ownerName,
+      name: name,
+      address: address,
+      email: email,
+      contactNumber: contactNumber,
+      whatsappNumber: whatsappNumber,
+      panNumber: panNumber,
+      gstNumber: gstNumber,
+      accountNumber: accountNumber,
+      ifscCode: ifscCode,
+      accountHolderName: accountHolderName,
+      ip: ip
+    };
+    Vendor.create(newVendor, function (err, newlyCreated) {
+      if (err) {
+        console.log(err);
+      } else {
+        // console.log("Uploaded to mongo!!!");
+        flag = 1;
+      }
+    });
 
 
-    if(flag === 1) {
-      res.send({
-        status: true,
-        msg: uploadFile.msg,
-      });
-    } else {
-      res.send({
-        status: false,
-        msg: uploadFile.msg,
-      });
-    }
+
+  if(flag === 1) {
+    res.send({
+      status: true,
+      msg: "mongo",
+    });
+  } else {
+    res.send({
+      status: false,
+      msg: "no mongo",
+    });
+  }
+
+}
+
 });
 
-function upload(
-  time,
+
+// function base64_encode(file) {
+//   // return new Promise((resolve,rejects)=>{
+//     // read binary data
+//     var bitmap = fs.readFileSync(file);
+//     // convert binary data to base64 encoded string
+//     return new Buffer(bitmap).toString('base64');
+//   // })
+// }
+
+// function base64_encode(file) {
+//   var reader = new FileReader();
+//   reader.readAsDataURL(file);
+//   reader.onload = function () {
+//     console.log(reader.result);
+//     return reader.result;
+//   };
+//   reader.onerror = function (error) {
+//     console.log('Error: ', error);
+//   };
+// }
+
+function upload2(time,
   panFront,
   signature,
-  cheque
-) {
-  const uploadPanFrontFile = uploadPanFront(time, panFront);
-  const uploadSignatureFile = uploadSignature(time, signature);
-  const uploadChequeFile = uploadCheque(time, cheque);
+  cheque){
+  return new Promise(async(resolve,rejects)=>{
+    const uploadPanFrontFile = uploadPanFront(time, panFront);
+    const uploadChequeFile = uploadCheque(time, cheque);
+    const uploadSignatureFile = uploadSignature(time, signature);
 
-  if (uploadPanFrontFile.status == false) {
-    return {
-      status: uploadPanFile.status,
-      msg: uploadPanFile.msg,
-    };
-  }
+    if (uploadPanFrontFile.status == false) {
+      return rejects({
+        status: uploadPanFile.status,
+        msg: uploadPanFile.msg,
+      });
+    }
 
-  if (uploadSignatureFile.status == false) {
-    return {
-      status: uploadSignatureFile.status,
-      msg: uploadSignatureFile.msg,
-    };
-  }
-  if (uploadChequeFile.status == false) {
-    return {
-      status: uploadChequeFile.status,
-      msg: uploadChequeFile.msg,
-    };
-  }
-  return {
-    status: true,
-    msg: "All Files Uploaded",
-  };
+    if (uploadChequeFile.status == false) {
+      return rejects({
+        status: uploadChequeFile.status,
+        msg: uploadChequeFile.msg,
+      });
+    }
+    uploadSignatureFile.then((data)=>{
+      return resolve({
+        status: true,
+        msg: "All Files Uploaded",
+      });
+    }).catch((e)=>{
+      return rejects({
+        status: uploadSignatureFile.status,
+        msg: uploadSignatureFile.msg,
+      });
+    })
+  })
 }
+
+// function upload(
+//   time,
+//   panFront,
+//   signature,
+//   cheque
+// ) {
+//   const uploadPanFrontFile = uploadPanFront(time, panFront);
+//   const uploadSignatureFile = uploadSignature(time, signature);
+//   const uploadChequeFile = uploadCheque(time, cheque);
+
+//   if (uploadPanFrontFile.status == false) {
+//     return {
+//       status: uploadPanFile.status,
+//       msg: uploadPanFile.msg,
+//     };
+//   }
+
+//   if (uploadSignatureFile.status == false) {
+//     return {
+//       status: uploadSignatureFile.status,
+//       msg: uploadSignatureFile.msg,
+//     };
+//   }
+//   if (uploadChequeFile.status == false) {
+//     return {
+//       status: uploadChequeFile.status,
+//       msg: uploadChequeFile.msg,
+//     };
+//   }
+//   return {
+//     status: true,
+//     msg: "All Files Uploaded",
+//   };
+// }
 
 function uploadPanFront(time, panFront) {
   panFront.mv(
@@ -291,22 +328,24 @@ function uploadPanFront(time, panFront) {
 }
 
 function uploadSignature(time, signature) {
-  signature.mv(
-    "./uploaded_files/signature/" + time + "_" + signature.name,
-    function (err) {
-      if (err) {
-        return {
-          status: false,
-          msg: err,
-        };
+  return new Promise(async(resolve,rejects)=>{
+    await signature.mv(
+      "./uploaded_files/signature/" + time + "_" + signature.name,
+      function (err) {
+        if (err) {
+          return rejects( {
+            status: false,
+            msg: err,
+          });
+        }
+        // console.log("Signature File uploaded!");
       }
-      // console.log("Signature File uploaded!");
-    }
-  );
-  return {
-    status: true,
-    msg: "Signature File uploaded!",
-  };
+    );
+    return resolve( {
+      status: true,
+      msg: "Signature File uploaded!",
+    });
+  })
 }
 
 function uploadCheque(time, cheque) {
