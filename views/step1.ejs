@@ -38,9 +38,10 @@
 
     <div class="container companyDetail mb-5">
         <div class="p-2">
-            <p>
-                <spam style="color: red;">*</spam> Required
-            </p>
+            <p class="mb-0">
+                <strong><spam style="color: red;">*</spam> Required
+                </strong></p>
+            <p><strong>&nbsp;&nbsp;&nbsp;NOTE: IMAGE SIZE MUST BE BETWEEN 10KB TO 5MB</strong></p>
             <div class="form-group">
                 <label for="inputTypeOfVenue" class="required">Type of Service Provider</label>
                 <select class="form-control" id="inputTypeOfVenue" name="cTypeOfVenue">
@@ -188,6 +189,7 @@
                     <label for="otp">Enter OTP</label><br>
                     <input type="text" id="otp" class="form-control" name="otp" placeholder="0000">
                     <input type="text" id="otpFrom" type="hidden">
+                    <input type="text" id="time" type="hidden">
                     <!-- <a href="/otp">Resend OTP (wait for 1 min)</a> -->
                 </div>
                 <div class="center mt-3">

@@ -1,7 +1,7 @@
 function otpSend() {
   var flag = 1;
   var form = new FormData();
-
+  var time = new Date().getTime().toString();
   const venueType = $("#inputTypeOfVenue").val();
   const ownerName = $("#inputOwnerName").val();
   const companyName = $("#composedName").val();
@@ -126,8 +126,24 @@ function otpSend() {
     return 0;
   }
 
+  var panSize = document.getElementById("panFront").files[0].size/1024;
+  var signatureSize = document.getElementById("signature").files[0].size/1024;
+
+  if (panSize == 0) {
+    alert("PAN scan copy can't be blank !");
+    $(".loader").css("visibility", "hidden");
+    flag = 0;
+    return 0;
+  }
+
   if (document.getElementById("panFront").files.length == 0) {
     alert("PAN Front can't be blank !");
+    $(".loader").css("visibility", "hidden");
+    flag = 0;
+    return 0;
+  }
+  if(panSize<10 || panSize>5120) {
+    alert("PAN size is: " + panSize + "-KB, which is not in range!");
     $(".loader").css("visibility", "hidden");
     flag = 0;
     return 0;
@@ -138,6 +154,23 @@ function otpSend() {
     $(".loader").css("visibility", "hidden");
     flag = 0;
     return 0;
+  }
+  if(signatureSize<10 || signatureSize>5120) {
+    alert("Signature size is: " + signatureSize + "-KB, which is not in range!");
+    $(".loader").css("visibility", "hidden");
+    flag = 0;
+    return 0;
+  }
+
+
+  if (document.getElementById("cheque").files.length > 0) {
+    var chequeSize = document.getElementById("cheque").files[0].size/1024;
+    if(chequeSize<10 || chequeSize>5120) {
+      alert("Cheque size is: " + ChequeSize + "-KB, which is not in range!");
+      $(".loader").css("visibility", "hidden");
+      flag = 0;
+      return 0;
+    }
   }
 
   if (flag === 1) {
@@ -159,7 +192,7 @@ function otpSend() {
   form.append("panFront", panFront);
   form.append("cheque", cheque);
   form.append("signature", signature);
-
+  form.append("time", time);
   var settings = {
     url: "/otp",
     method: "POST",
@@ -176,6 +209,10 @@ function otpSend() {
     if (response.status == true) {
       // console.log(response.value);
       $("#otpFrom").val(response.value);
+      $("#time").val(response.time);
+      $('#time').css("visibility", "hidden");
+      $("#result").css("pointer-events", "none");
+      $("#result").addClass("disabled");
 
       var timeleft = 30;
       var downloadTimer = setInterval(function () {
@@ -200,10 +237,10 @@ function otpSend() {
 
 function sub() {
   $(".loader").css("visibility", "visible");
-
+  $("#OTPTimer").css("visibility", "hidden");
   var flag = 1;
   var form = new FormData();
-
+  const time = $("#time").val();
   const venueType = $("#inputTypeOfVenue").val();
   const ownerName = $("#inputOwnerName").val();
   const companyName = $("#composedName").val();
@@ -293,7 +330,8 @@ function sub() {
     $(".loader").css("visibility", "hidden");
     flag = 0;
     return 0;
-  }
+  } 
+
   if (document.getElementById("signature").files.length == 0) {
     alert("Signature can't be blank !");
     $(".loader").css("visibility", "hidden");
@@ -330,6 +368,7 @@ function sub() {
   form.append("panFront", panFront);
   form.append("cheque", cheque);
   form.append("signature", signature);
+  form.append("time", time);
 
   var settings = {
     url: "/post",

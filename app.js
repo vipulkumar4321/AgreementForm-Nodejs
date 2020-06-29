@@ -8,7 +8,8 @@ const fileUpload = require("express-fileupload"),
   requestIp = require("request-ip"),
   axios = require("axios"),
   imageToBase64 = require("image-to-base64");
-
+  //var sleep = require('sleep');
+  
 require("dotenv/config");
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -18,6 +19,8 @@ app.use(
     extended: false,
   })
 );
+
+var count = 0;
 
 //DB connnection
 mongoose.connect(
@@ -68,46 +71,68 @@ app.get("/agreement", function (req, res) {
 });
 
 app.post("/otp", function (req, res) {
-  var contact = req.body.contactNumber;
-  var OTP = Math.floor(1000 + Math.random() * 9000);
-  var message =
-    "<#> Your veneufy.in OTP is: " +
-    OTP +
-    ".Note: Please DO NOT SHARE this OTP with anyone.";
-  var params = {
-    Message: message,
-    PhoneNumber: "+91" + contact,
-    MessageAttributes: {
-      "AWS.SNS.SMS.SenderID": {
-        DataType: "String",
-        StringValue: "Venuefy",
+  var time = req.body.time;
+  var panFront = req.files.panFront;
+  var cheque = req.files.cheque;
+  var signature = req.files.signature;
+
+  // console.log('Signature:' + signature);
+  // console.log("time: " + time);
+
+  const uploadFile = upload(time, panFront, signature, cheque);
+
+  // console.log("all upload completed\n\n");
+  // console.log('uploadFiles.status == true');
+  if(uploadFile.status == true) {
+    // console.log('uploadFiles.status == true');
+    var contact = req.body.contactNumber;
+    var OTP = Math.floor(1000 + Math.random() * 9000);
+    var message =
+      "<#> Your veneufy.in OTP is: " +
+      OTP +
+      ".Note: Please DO NOT SHARE this OTP with anyone.";
+    var params = {
+      Message: message,
+      PhoneNumber: "+91" + contact,
+      MessageAttributes: {
+        "AWS.SNS.SMS.SenderID": {
+          DataType: "String",
+          StringValue: "Venuefy",
+        },
       },
-    },
-  };
-
-  var publishTextPromise = new AWS.SNS({
-      apiVersion: "2010-03-31",
-    })
-    .publish(params)
-    .promise();
-
-  publishTextPromise
-    .then(function (data) {
-      // console.log(OTP);
-    })
-    .catch(function (err) {
-      res.send("Something went wrong, Try again !!!");
+    };
+  
+    var publishTextPromise = new AWS.SNS({
+        apiVersion: "2010-03-31",
+      })
+      .publish(params)
+      .promise();
+  
+    publishTextPromise
+      .then(function (data) {
+        // console.log(OTP);
+      })
+      .catch(function (err) {
+        res.send("Something went wrong, Try again !!!");
+      });
+    return res.send({
+      value: OTP,
+      time: time,
+      status: true,
+      msg: "OTP sent successfully!!!",
     });
-  return res.send({
-    value: OTP,
-    status: true,
-    msg: "OTP sent successfully!!!",
-  });
+  } else {
+    // console.log("uploadFiles.status == false");
+    res.send({
+      status: false,
+      msg: uploadFile.msg,
+    });
+  }
 });
 
 app.post("/post", function (req, res) {
-  var time = new Date().getTime().toString();
-
+  // console.log('Inside post');
+  var time = req.body.time;
   var venueType = req.body.venueType;
   var ownerName = req.body.ownerName;
   var name = req.body.companyName;
@@ -123,24 +148,25 @@ app.post("/post", function (req, res) {
   var accountHolderName = req.body.accountHolderName;
   var cheque = req.files.cheque;
   var signature = req.files.signature;
-
-  var signatureAddress =
-    "./uploaded_files/signature/" + time + "_" + signature.name;
-
   var ip = requestIp.getClientIp(req);
 
-  const uploadFile = upload(
-    time,
-    panFront,
-    signature,
-    cheque
-  );
+  // console.log('Signature:' + signature);
+
+  // const uploadFile = upload(time, panFront, signature, cheque);
+
 
   // console.log(uploadFile);
 
+// console.log(time);
+//   console.log("Inside call image..");
+  var signatureAddress =
+  "./uploaded_files/signature/" + time + "_" + signature.name;
+  
+  // console.log('signature address:' + signatureAddress);
 
   imageToBase64(signatureAddress) // you can also to use url
     .then((resp) => {
+      // console.log('Resp:' + resp);
       axios
         .post(process.env.PDF_API, {
           category: venueType,
@@ -160,8 +186,8 @@ app.post("/post", function (req, res) {
           var vCode = response["data"]["result"]["vcode"];
           // console.log(timeStamp);
           // console.log(vCode);
-
-          if (uploadFile.status == true) {
+          count++;
+          console.log(count);
             var newVendor = {
               time: time,
               timeStamp: timeStamp,
@@ -182,44 +208,44 @@ app.post("/post", function (req, res) {
             };
             Vendor.create(newVendor, function (err, newlyCreated) {
               if (err) {
-                console.log(err);
+                // console.log(err);
               } else {
                 // console.log("Uploaded to mongo!!!");
                 res.send({
                   status: true,
-                  msg: uploadFile.msg,
+                  msg: "complete",
                 });
               }
             });
-          } else {
-            console.log("something went wrong!!!");
-            res.send({
-              status: false,
-              msg: uploadFile.msg,
-            });
-          }
         })
         .catch(function (error) {
           console.log(error);
+          console.log(time);
         });
       // console.log("Converting in base64..."); //cGF0aC90by9maWxlLmpwZw==
     })
     .catch((err) => {
-      console.log(err); //Exepection error....
+      console.log(err); 
+      console.log(time);
     });
+    // console.log('imageToBase64 defined');
+    // setTimeout(callImage,1000);
 });
 
-function upload(
-  time,
-  panFront,
-  signature,
-  cheque
-) {
+// function finish() {
+//   console.log("Final function");
+// }
+
+
+function upload(time, panFront, signature, cheque) {
+  // console.log('signature in upload:' + signature);
   const uploadPanFrontFile = uploadPanFront(time, panFront);
+  // console.log('calling uploadSignature');
   const uploadSignatureFile = uploadSignature(time, signature);
   const uploadChequeFile = uploadCheque(time, cheque);
 
   if (uploadPanFrontFile.status == false) {
+    // console.log('1st is failing');
     return {
       status: uploadPanFile.status,
       msg: uploadPanFile.msg,
@@ -227,17 +253,21 @@ function upload(
   }
 
   if (uploadSignatureFile.status == false) {
+    // console.log('2nd is failing');
     return {
       status: uploadSignatureFile.status,
       msg: uploadSignatureFile.msg,
     };
   }
   if (uploadChequeFile.status == false) {
+    // console.log('3rd is failing');
     return {
       status: uploadChequeFile.status,
       msg: uploadChequeFile.msg,
     };
   }
+
+  // console.log('end of upload');
   return {
     status: true,
     msg: "All Files Uploaded",
@@ -264,10 +294,14 @@ function uploadPanFront(time, panFront) {
 }
 
 function uploadSignature(time, signature) {
+  // return new Promise(resolve => {
+  // console.log('Inside uploadSignature:' + signature);
   signature.mv(
-    "./uploaded_files/signature/" + time + "_" + signature.name,
+    "./uploaded_files/signature/" + time +  "_" + signature.name,
     function (err) {
+      // console.log('err function called');
       if (err) {
+        // console.log('inside if err');
         return {
           status: false,
           msg: err,
@@ -276,10 +310,14 @@ function uploadSignature(time, signature) {
       // console.log("Signature File uploaded!");
     }
   );
+  // console.log('a=' + a);
+  // console.log('End of uploadSignature');
   return {
     status: true,
     msg: "Signature File uploaded!",
   };
+  // resolve();
+  // });
 }
 
 function uploadCheque(time, cheque) {

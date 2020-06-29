@@ -81,8 +81,7 @@ hr.style:after {
 
 /* thanks */
 .vcenter {
-  margin-top: 10%;
-  align-items: center;
+  transform: translateY(50%);
 }
 
 .sign {
@@ -120,4 +119,23 @@ hr.style:after {
 
 .otp-form {
   visibility: hidden;
+}
+
+#result {
+  visibility: visible;
+}
+
+#time {
+  visibility: hidden;
+}
+
+.mainContainer{
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mainContainer div{
+  width: -webkit-fill-available;
 }
