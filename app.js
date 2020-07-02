@@ -111,16 +111,18 @@ app.post("/otp", function (req, res) {
     publishTextPromise
       .then(function (data) {
         // console.log(OTP);
+        res.send({
+          value: OTP,
+          time: time,
+          status: true,
+          msg: "OTP sent successfully!!!",
+        });
       })
       .catch(function (err) {
+        console.log(err)
         res.send("Something went wrong, Try again !!!");
       });
-    return res.send({
-      value: OTP,
-      time: time,
-      status: true,
-      msg: "OTP sent successfully!!!",
-    });
+    
   } else {
     // console.log("uploadFiles.status == false");
     res.send({
@@ -208,7 +210,7 @@ app.post("/post", function (req, res) {
             };
             Vendor.create(newVendor, function (err, newlyCreated) {
               if (err) {
-                // console.log(err);
+                console.log(err);
               } else {
                 // console.log("Uploaded to mongo!!!");
                 res.send({
@@ -239,9 +241,10 @@ app.post("/post", function (req, res) {
 
 function upload(time, panFront, signature, cheque) {
   // console.log('signature in upload:' + signature);
+  const uploadSignatureFile = uploadSignature(time, signature);
   const uploadPanFrontFile = uploadPanFront(time, panFront);
   // console.log('calling uploadSignature');
-  const uploadSignatureFile = uploadSignature(time, signature);
+ 
   const uploadChequeFile = uploadCheque(time, cheque);
 
   if (uploadPanFrontFile.status == false) {
